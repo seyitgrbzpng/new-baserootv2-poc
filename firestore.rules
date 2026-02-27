@@ -1,0 +1,290 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(uid()));
+    }
+
+    function userDocExists() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/users/$(uid()));
+    }
+
+    function role() {
+      // If user document doesn't exist yet, treat as basic user.
+      return userDocExists() ? userDoc().data.role : 'user';
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && role() == 'admin';
+    }
+
+    function isCreator() {
+      return isAuthenticated() && (role() == 'creator' || role() == 'admin');
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && uid() == userId;
+    }
+
+    function wallet() {
+      return request.auth.token.walletAddress;
+    }
+
+    function isWalletOwner(walletAddr) {
+      return isAuthenticated() && wallet() == walletAddr;
+    }
+
+    function isSignedIn() {
+      return isAuthenticated();
+    }
+
+    function onlyAllowKeys(allowed) {
+      // Ensures only these keys are modified (create or update context).
+      return request.resource.data.keys().hasOnly(allowed);
+    }
+
+    function onlyChangesKeys(allowed) {
+      // Ensures only these keys are changed on update.
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowed);
+    }
+
+    // ----------------------------
+    // Users
+    // ----------------------------
+    match /users/{userId} {
+      // Public profile info can be read (creator display, etc.)
+      allow read: if true;
+
+      // Client-side creation is not allowed; user doc is created/updated by backend Admin SDK.
+      allow create: if false;
+
+      // Users can update *only* safe profile fields.
+      // Prevents privilege escalation by blocking role changes from client.
+      allow update: if isOwner(userId) && onlyChangesKeys([
+        'displayName',
+        'photoURL',
+        'bio',
+        'website',
+        'twitter',
+        'telegram',
+        'updatedAt',
+        'lastSignedIn'
+      ]);
+
+      // Only admins can delete (optional; normally never used)
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------
+    // Agents
+    // ----------------------------
+    match /agents/{agentId} {
+      // Marketplace browsing: public read
+      allow read: if true;
+
+      // Only creators can create agents and must be the creatorUid
+      allow create: if isCreator() &&
+        request.resource.data.creatorUid == uid() &&
+        // Minimal required keys check (avoid junk docs)
+        request.resource.data.keys().hasAll(['creatorUid', 'title', 'description', 'createdAt', 'updatedAt']);
+
+      // Only agent owner can update selected fields (immutable creatorUid)
+      allow update: if isAuthenticated() &&
+        resource.data.creatorUid == uid() &&
+        // For safety, prevent changing creatorUid and createdAt
+        !('creatorUid' in request.resource.data.diff(resource.data).affectedKeys()) &&
+        !('createdAt' in request.resource.data.diff(resource.data).affectedKeys());
+
+      // Owner or admin can delete
+      allow delete: if isAuthenticated() && (resource.data.creatorUid == uid() || isAdmin());
+    }
+
+    // ----------------------------
+    // Agent Versions
+    // ----------------------------
+    match /agent_versions/{versionId} {
+      // Public read (optionally filter in queries by status/published)
+      allow read: if true;
+
+      // Only agent owner can create versions
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['agentId', 'version', 'createdAt', 'updatedAt']) &&
+        get(/databases/$(database)/documents/agents/$(request.resource.data.agentId)).data.creatorUid == uid();
+
+      // Only agent owner can update versions (prevent changing agentId)
+      allow update: if isAuthenticated() &&
+        get(/databases/$(database)/documents/agents/$(resource.data.agentId)).data.creatorUid == uid() &&
+        !('agentId' in request.resource.data.diff(resource.data).affectedKeys());
+
+      // Versions are immutable by delete
+      allow delete: if false;
+    }
+
+    // ----------------------------
+    // Reviews
+    // ----------------------------
+    match /reviews/{reviewId} {
+      allow read: if true;
+
+      // Authenticated users can create reviews for agents
+      allow create: if isAuthenticated() &&
+        request.resource.data.userUid == uid() &&
+        request.resource.data.keys().hasAll(['userUid', 'agentId', 'rating', 'comment', 'createdAt', 'updatedAt']);
+
+      // Users can update their own reviews (only rating/comment)
+      allow update: if isAuthenticated() &&
+        resource.data.userUid == uid() &&
+        onlyChangesKeys(['rating', 'comment', 'updatedAt']);
+
+      // Users can delete their own reviews; admin can delete any
+      allow delete: if isAuthenticated() && (resource.data.userUid == uid() || isAdmin());
+    }
+
+    // ----------------------------
+    // Favorites
+    // ----------------------------
+    match /favorites/{favoriteId} {
+      allow read: if isAuthenticated() && resource.data.userUid == uid();
+
+      allow create: if isAuthenticated() &&
+        request.resource.data.userUid == uid() &&
+        request.resource.data.keys().hasAll(['userUid', 'agentId', 'createdAt']);
+
+      allow update: if false;
+
+      allow delete: if isAuthenticated() && resource.data.userUid == uid();
+    }
+
+    // ----------------------------
+    // Payments (server-only writes)
+    // ----------------------------
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() &&
+        (isOwner(resource.data.fromUid) ||
+         isWalletOwner(resource.data.fromWallet) ||
+         isOwner(resource.data.toUid) ||
+         isWalletOwner(resource.data.toWallet) ||
+         isAdmin());
+
+      // Only backend Admin SDK should write; client cannot.
+      allow create, update, delete: if false;
+    }
+
+    // ----------------------------
+    // Agent Runs (server-only writes)
+    // ----------------------------
+    match /agent_runs/{runId} {
+      allow read: if isAuthenticated() &&
+        (isOwner(resource.data.userUid) ||
+         isWalletOwner(resource.data.userWallet) ||
+         get(/databases/$(database)/documents/agents/$(resource.data.agentId)).data.creatorUid == uid() ||
+         isAdmin());
+
+      // Only backend Admin SDK should write; client cannot.
+      allow create, update, delete: if false;
+    }
+
+    // ----------------------------
+    // Notifications (server-only create)
+    // ----------------------------
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userUid == uid();
+      allow create: if false;
+
+      // Users can mark as read only
+      allow update: if isAuthenticated() &&
+        resource.data.userUid == uid() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+
+      allow delete: if isAuthenticated() && resource.data.userUid == uid();
+    }
+
+    // ----------------------------
+    // Subscriptions (server-only create)
+    // ----------------------------
+    match /subscriptions/{subscriptionId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userUid == uid() ||
+         get(/databases/$(database)/documents/agents/$(resource.data.agentId)).data.creatorUid == uid() ||
+         isAdmin());
+
+      allow create: if false;
+
+      // Users can cancel their own subscriptions
+      allow update: if isAuthenticated() &&
+        resource.data.userUid == uid() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'cancelAt', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // ----------------------------
+    // Payment Credits
+    // ----------------------------
+    match /payment_credits/{creditId} {
+      allow read: if isAuthenticated() && 
+        (isOwner(resource.data.userId) || 
+         isWalletOwner(resource.data.userId) || 
+         isAdmin());
+         
+      // Only backend Admin SDK should write
+      allow create, update, delete: if false;
+    }
+
+    // ----------------------------
+    // Analytics (admin read, server write)
+    // ----------------------------
+    match /analytics_events/{eventId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    // ----------------------------
+    // Search Filters
+    // ----------------------------
+    match /search_filters/{filterId} {
+      allow read: if isOwner(resource.data.userUid);
+      allow create: if isOwner(request.resource.data.userUid) && onlyAllowKeys(['userUid', 'name', 'category', 'tags', 'minRating', 'maxPrice', 'currency', 'createdAt']);
+      allow update: if isOwner(resource.data.userUid) && onlyChangesKeys(['name', 'category', 'tags', 'minRating', 'maxPrice', 'currency', 'lastUsed', 'updatedAt']);
+      allow delete: if isOwner(resource.data.userUid);
+    }
+
+    // ----------------------------
+    // Multichain Wallets
+    // ----------------------------
+    match /multichain_wallets/{walletId} {
+      allow read: if isOwner(resource.data.userUid);
+      allow create: if isOwner(request.resource.data.userUid) && onlyAllowKeys(['userUid', 'solanaAddress', 'tonAddress', 'baseAddress', 'primaryChain', 'verified', 'createdAt', 'updatedAt']);
+      allow update: if isOwner(resource.data.userUid) && onlyChangesKeys(['solanaAddress', 'tonAddress', 'baseAddress', 'primaryChain', 'verified', 'updatedAt']);
+      allow delete: if isOwner(resource.data.userUid);
+    }
+
+    // ----------------------------
+    // Default: deny everything else
+    // ----------------------------
+    
+
+// Admin audit logs (server-only write; admin read)
+match /admin_audit/{docId} {
+  allow read: if isSignedIn() && isAdmin();
+  allow create, update, delete: if false;
+}
+
+match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,684 @@
+{
+    "address": "GMcBnSqdXwqZguF8FSdfWeWcAfjAHC39YDhb8UXDLexT",
+    "metadata": {
+        "name": "baseroot_protocol",
+        "version": "0.1.0",
+        "spec": "0.1.0"
+    },
+    "instructions": [
+        {
+            "name": "registerAgent",
+            "accounts": [
+                {
+                    "name": "agent",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    97,
+                                    103,
+                                    101,
+                                    110,
+                                    116
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "authority"
+                            },
+                            {
+                                "kind": "arg",
+                                "path": "name"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "authority",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "uri",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "depositForExecution",
+            "accounts": [
+                {
+                    "name": "executionEscrow",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    101,
+                                    115,
+                                    99,
+                                    114,
+                                    111,
+                                    119
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "user"
+                            },
+                            {
+                                "kind": "account",
+                                "path": "agent"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "user",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "agent",
+                    "writable": false
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "amount",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "settleExecution",
+            "accounts": [
+                {
+                    "name": "executionEscrow",
+                    "writable": true
+                },
+                {
+                    "name": "agent",
+                    "writable": true
+                },
+                {
+                    "name": "agentAuthority",
+                    "writable": true
+                },
+                {
+                    "name": "protocolTreasury",
+                    "writable": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "usageHash",
+                    "type": {
+                        "array": [
+                            "u8",
+                            32
+                        ]
+                    }
+                },
+                {
+                    "name": "dataOwnerAmounts",
+                    "type": {
+                        "vec": "u64"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "registerProvider",
+            "accounts": [
+                {
+                    "name": "provider",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    112,
+                                    114,
+                                    111,
+                                    118,
+                                    105,
+                                    100,
+                                    101,
+                                    114
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "authority"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "authority",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "uri",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "registerDataset",
+            "accounts": [
+                {
+                    "name": "provider",
+                    "writable": true
+                },
+                {
+                    "name": "dataset",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    100,
+                                    97,
+                                    116,
+                                    97,
+                                    115,
+                                    101,
+                                    116
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "provider"
+                            },
+                            {
+                                "kind": "arg",
+                                "path": "identifier"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "authority",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "identifier",
+                    "type": "string"
+                },
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "dataHash",
+                    "type": {
+                        "array": [
+                            "u8",
+                            32
+                        ]
+                    }
+                },
+                {
+                    "name": "uri",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "setPolicy",
+            "accounts": [
+                {
+                    "name": "dataset",
+                    "writable": true
+                },
+                {
+                    "name": "provider",
+                    "writable": false
+                },
+                {
+                    "name": "policy",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    112,
+                                    111,
+                                    108,
+                                    105,
+                                    99,
+                                    121
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "dataset"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "authority",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "pricePerUnit",
+                    "type": "u64"
+                },
+                {
+                    "name": "revenueShareBps",
+                    "type": "u16"
+                },
+                {
+                    "name": "usageFlags",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "settleUsage",
+            "accounts": [
+                {
+                    "name": "executionEscrow",
+                    "writable": true
+                },
+                {
+                    "name": "dataset",
+                    "writable": false
+                },
+                {
+                    "name": "policy",
+                    "writable": false
+                },
+                {
+                    "name": "provider",
+                    "writable": true
+                },
+                {
+                    "name": "providerTreasury",
+                    "writable": true
+                },
+                {
+                    "name": "protocolTreasury",
+                    "writable": true
+                },
+                {
+                    "name": "systemProgram",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "unitsUsed",
+                    "type": "u64"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "agentAccount",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "uri",
+                        "type": "string"
+                    },
+                    {
+                        "name": "totalUses",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "totalEarned",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "status",
+                        "type": {
+                            "defined": "AgentStatus"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "executionEscrow",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "user",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "agent",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "status",
+                        "type": {
+                            "defined": "ExecutionStatus"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "providerAccount",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "uri",
+                        "type": "string"
+                    },
+                    {
+                        "name": "totalEarned",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "isVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "datasetAccount",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "provider",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataHash",
+                        "type": {
+                            "array": [
+                                "u8",
+                                32
+                            ]
+                        }
+                    },
+                    {
+                        "name": "uri",
+                        "type": "string"
+                    },
+                    {
+                        "name": "version",
+                        "type": "u32"
+                    },
+                    {
+                        "name": "status",
+                        "type": {
+                            "defined": "DatasetStatus"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "policyAccount",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "dataset",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "pricePerUnit",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "revenueShareBps",
+                        "type": "u16"
+                    },
+                    {
+                        "name": "usageFlags",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "AgentStatus",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Pending"
+                    },
+                    {
+                        "name": "Active"
+                    },
+                    {
+                        "name": "Suspended"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ExecutionStatus",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Pending"
+                    },
+                    {
+                        "name": "Completed"
+                    },
+                    {
+                        "name": "Disputed"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "DatasetStatus",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Active"
+                    },
+                    {
+                        "name": "Paused"
+                    },
+                    {
+                        "name": "Deprecated"
+                    }
+                ]
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "PaymentEvent",
+            "fields": [
+                {
+                    "name": "agentId",
+                    "type": "publicKey",
+                    "index": false
+                },
+                {
+                    "name": "user",
+                    "type": "publicKey",
+                    "index": false
+                },
+                {
+                    "name": "platformFee",
+                    "type": "u64",
+                    "index": false
+                },
+                {
+                    "name": "agentShare",
+                    "type": "u64",
+                    "index": false
+                },
+                {
+                    "name": "dataOwnerPayout",
+                    "type": "u64",
+                    "index": false
+                },
+                {
+                    "name": "timestamp",
+                    "type": "i64",
+                    "index": false
+                }
+            ]
+        },
+        {
+            "name": "UsageEvent",
+            "fields": [
+                {
+                    "name": "dataset",
+                    "type": "publicKey",
+                    "index": false
+                },
+                {
+                    "name": "provider",
+                    "type": "publicKey",
+                    "index": false
+                },
+                {
+                    "name": "agent",
+                    "type": "publicKey",
+                    "index": false
+                },
+                {
+                    "name": "units",
+                    "type": "u64",
+                    "index": false
+                },
+                {
+                    "name": "cost",
+                    "type": "u64",
+                    "index": false
+                },
+                {
+                    "name": "timestamp",
+                    "type": "i64",
+                    "index": false
+                }
+            ]
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "InsufficientFunds",
+            "msg": "Insufficient funds in escrow for requested payout"
+        },
+        {
+            "code": 6001,
+            "name": "InvalidDataOwnerAccounts",
+            "msg": "Invalid number of data owner accounts provided"
+        },
+        {
+            "code": 6002,
+            "name": "MathOverflow",
+            "msg": "Math Overflow"
+        }
+    ]
+}
