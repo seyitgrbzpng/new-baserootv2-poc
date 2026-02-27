@@ -1,77 +1,75 @@
 # Baseroot.io — DeSci AI Agent Marketplace (V2)
 
-> **Decentralized AI Agent Marketplace powered by Avalanche (AVAX) blockchain.**
+The decentralized AI Agent Marketplace powered by the Avalanche (AVAX) blockchain.
 
 ![Baseroot Logo](./client/public/logo.svg)
 
-## 🚀 Genel Bakış
+## Overview
 
-Baseroot.io, veri sağlayıcılar (DAO'lar), yapay zeka ajan geliştiricileri (Creators) ve son kullanıcılar (Consumers) arasında güvenli ve şeffaf bir köprü kuran merkeziyetsiz bir pazaryeridir. Platform, DeSci (Merkeziyetsiz Bilim) topluluğu için özel olarak tasarlanmış olup, veri haklarını koruyan **Attestation-based Inference** ve **Avalanche Smart Contract** tabanlı gelir paylaşımı modellerini kullanır.
+Baseroot.io is a decentralized marketplace protocol designed to facilitate secure and transparent interaction between data providers (DAOs), AI agent developers (Creators), and end-users (Consumers). The platform is specifically engineered for the DeSci (Decentralized Science) community, utilizing an Attestation-based Inference model and Avalanche Smart Contract-based revenue distribution to ensure data sovereignty and fair compensation.
 
 > [!IMPORTANT]
-> Projenin detaylı vizyonu, ekonomik modeli ve teknik mimarisi için **[Baseroot V2 Whitepaper](./WHITEPAPER.md)** dosyasını inceleyebilirsiniz.
+> For a detailed analysis of the protocol's vision, economic model, and technical architecture, please refer to the **[Baseroot V2 Whitepaper](./WHITEPAPER.md)**.
 
-## 🔗 Gelir Paylaşım Modeli (50/40/10)
+## Revenue Distribution Model (50/40/10)
 
-Platformdaki her işlem, akıllı sözleşme (`BaserootMarketplaceV2.sol`) tarafından otomatik olarak 3'e bölünür:
+All transactions within the platform are automatically processed and distributed by the `BaserootMarketplaceV2.sol` smart contract according to the following logic:
 
 ```mermaid
 graph TD
-    User["Tüketici (User)"] -- 100% AVAX --> Contract["Akıllı Sözleşme (V2)"]
-    Contract -- 50% --> DAO["DAO (Veri Sağlayıcı)"]
-    Contract -- 40% --> Creator["Creator (Ajan Geliştirici)"]
-    Contract -- 10% --> Protocol["Baseroot Hazinesi"]
+    User["Consumer (User)"] -- 100% AVAX --> Contract["Smart Contract (V2)"]
+    Contract -- 50% --> DAO["DAO (Data Provider)"]
+    Contract -- 40% --> Creator["Creator (Agent Developer)"]
+    Contract -- 10% --> Protocol["Baseroot Treasury"]
 ```
 
-- **Şeffaflık:** Tüm dağılımlar on-chain gerçekleşir ve Snowtrace üzerinden doğrulanabilir.
-- **Adalet:** Veri sahibi (DAO) en yüksek payı alarak platformun can damarı olan veri akışını teşvik eder.
+- **Transparency:** All distributions occur on-chain and are fully verifiable via Snowtrace.
+- **Incentive Alignment:** Data providers (DAOs) receive the largest share, incentivizing the provision of high-value research data which serves as the protocol's primary intelligence source.
 
-## ✨ Öne Çıkan Özellikler
+## Key Features
 
-### 🔐 Blockchain & Ekonomi
-- **Avalanche Fuji Testnet:** Düşük gecikme süreli ve güvenilir C-Chain entegrasyonu.
-- **Virtual Treasury (Claim):** Kullanıcıların veritabanındaki kazançlarını cüzdanlarına çekmelerini sağlayan Web 2.5 muhasebe tabanlı settlement sistemi.
-- **On-Chain Gateway:** Harici ajanların kullanımı, akıllı sözleşme üzerindeki lisans kontrolü ile doğrulanır.
+### Blockchain and Economics
+- **Avalanche Fuji Testnet:** Low-latency and reliable C-Chain integration for all financial operations.
+- **Virtual Treasury (Claim):** A Web 2.5 accounting-based settlement system allowing users to claim earned balances to their wallets.
+- **On-Chain Gateway:** External agent access is gated and verified through license checks on the smart contract.
 
-### 🤖 Veri Gizliliği & ZK-RAG
-- **Zero-Knowledge Inference:** DAO verileri asla ajanı kullanan kişiye veya modelin dışına sızmaz. LLM sadece analiz üretir, ham veriyi göstermez.
-- **Dataset Provenance:** Veri setleri zincir üzerinde kayıt altına alınarak fikri mülkiyet hakları (`registerDataset`) korunur.
+### Data Privacy and ZK-RAG
+- **Zero-Knowledge Inference:** DAO datasets are processed without exposure to the end-user or the base model. The LLM generates insights while maintaining raw data confidentiality.
+- **Dataset Provenance:** Datasets are registered on-chain with immutable hashes via the `registerDataset` function to protect intellectual property.
 
-### 🎨 Modern UI/UX
-- **Deep Dark Aesthetic:** Glassmorphism ve Amber vurgulu modern arayüz.
-- **Role-Based Dashboards:** Tüketici, Geliştirici ve DAO rolleri için özelleştirilmiş Dashboards.
+### Professional Interface
+- **Modern Aesthetic:** A formal interface utilizing glassmorphism and amber highlights for a professional, high-tech experience.
+- **Role-Based Portals:** Dedicated dashboards tailored for the specific needs of Consumers, Developers, and DAO Administrators.
 
-## 🛠️ Teknoloji Stack
+## Technical Stack
 
-- **Frontend:** React 19, Vite, TailwindCSS 4, Wagmi/Viem, tRPC, Lucide React.
-- **Backend:** Node.js/Express, Firebase Firestore (`avax_` prefixed collections), Firebase Auth.
-- **Smart Contract:** Solidity (BaserootMarketplaceV2) deployed on **Fuji Testnet**.
+- **Frontend:** React 19, Vite, TailwindCSS 4, Wagmi/Viem, tRPC.
+- **Backend:** Node.js/Express, Firebase Firestore (prefixed collections), Firebase Auth.
+- **Smart Contract:** Solidity (BaserootMarketplaceV2) deployed on the Fuji Testnet.
 
-## 📦 Kurulum ve Devreye Alma
+## Installation and Deployment
 
-### Kurulum Adımları
+### 1. Clone the repository and install dependencies
+```bash
+pnpm install
+```
 
-1. **Repoyu klonlayın ve bağımlılıkları yükleyin:**
-   ```bash
-   pnpm install
-   ```
+### 2. Environment Configuration
+Copy the `.env.example` file to `.env` and configure the Avalanche Fuji contract address:
+```bash
+VITE_BASEROOT_MARKETPLACE_ADDRESS=0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782
+```
 
-2. **Environment (.env) Ayarları:**
-   `.env.example` dosyasını `.env` olarak kopyalayın ve Avalanche Fuji kontrat adresini girin:
-   ```bash
-   VITE_BASEROOT_MARKETPLACE_ADDRESS=0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782
-   ```
+### 3. Start the Development Server
+```bash
+pnpm dev
+```
 
-3. **Geliştirme Sunucusunu Başlatın:**
-   ```bash
-   pnpm dev
-   ```
-
-## � Sözleşme Bilgileri
+## Contract Information
 
 - **Network:** Avalanche Fuji (Chain ID: 43113)
-- **V2 Smart Contract:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782`
-- **Explorer:** [Snowtrace Fuji](https://testnet.snowtrace.io/address/0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782)
+- **V2 Smart Contract Address:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782`
+- **Blockchain Explorer:** [Snowtrace Fuji](https://testnet.snowtrace.io/address/0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782)
 
 ---
 **Built for the DeSci Community • Powered by Avalanche (AVAX)**
