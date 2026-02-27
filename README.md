@@ -1,76 +1,56 @@
-# Baseroot.io — DeSci AI Agent Marketplace (V2)
+# Baseroot V2: Decentralized Knowledge Liquidity & AI Agent Commerce Protocol
 
-The decentralized AI Agent Marketplace powered by the Avalanche (AVAX) blockchain.
+Baseroot V2 is a decentralized protocol designed to enable AI agents to access DAO-owned verified datasets under programmable licenses, while automatically distributing revenue to data owners based on actual usage.
 
 ![Baseroot Logo](./client/public/logo.svg)
 
-## Overview
+## Protocol Abstract
 
-Baseroot.io is a decentralized marketplace protocol designed to facilitate secure and transparent interaction between data providers (DAOs), AI agent developers (Creators), and end-users (Consumers). The platform is specifically engineered for the DeSci (Decentralized Science) community, utilizing an Attestation-based Inference model and Avalanche Smart Contract-based revenue distribution to ensure data sovereignty and fair compensation.
+The protocol introduces a new economic layer where knowledge becomes a yield-generating digital asset. By extending the AI agent marketplace model with **Verified Data Pools** and a trustless revenue routing mechanism, Baseroot V2 ensures fair attribution, transparency, and sustainable revenue models for data producers.
 
 > [!IMPORTANT]
-> For a detailed analysis of the protocol's vision, economic model, and technical architecture, please refer to the **[Baseroot V2 Whitepaper](./WHITEPAPER.md)**.
+> For the complete technical specification and long-term vision, please refer to the **[Baseroot V2 Whitepaper](./WHITEPAPER.md)**.
 
-## Revenue Distribution Model (50/40/10)
+## Economic Model: Revenue Routing (50/40/10)
 
-All transactions within the platform are automatically processed and distributed by the `BaserootMarketplaceV2.sol` smart contract according to the following logic:
+Payments are triggered by successful inference executions or license acquisitions. Revenue is automatically routed between the dataset-owning DAO, the AI agent developer, and the Baseroot protocol via the `BaserootMarketplaceV2.sol` smart contract.
 
 ```mermaid
 graph TD
-    User["Consumer (User)"] -- 100% AVAX --> Contract["Smart Contract (V2)"]
-    Contract -- 50% --> DAO["DAO (Data Provider)"]
-    Contract -- 40% --> Creator["Creator (Agent Developer)"]
-    Contract -- 10% --> Protocol["Baseroot Treasury"]
+    User["Consumer (User)"] -- 100% AVAX --> Contract["Revenue Router (V2)"]
+    Contract -- 50% --> DAO["DAO (Data Owner)"]
+    Contract -- 40% --> Creator["Agent Developer"]
+    Contract -- 10% --> Protocol["Protocol Treasury"]
 ```
 
-- **Transparency:** All distributions occur on-chain and are fully verifiable via Snowtrace.
-- **Incentive Alignment:** Data providers (DAOs) receive the largest share, incentivizing the provision of high-value research data which serves as the protocol's primary intelligence source.
+- **Liquidity Layer:** Knowledge assets generate real-time yield for contributors.
+- **On-Chain Verification:** All settlements are processed on the Avalanche Fuji Testnet and are verifiable via Snowtrace.
 
-## Key Features
+## System Architecture
 
-### Blockchain and Economics
-- **Avalanche Fuji Testnet:** Low-latency and reliable C-Chain integration for all financial operations.
-- **Virtual Treasury (Claim):** A Web 2.5 accounting-based settlement system allowing users to claim earned balances to their wallets.
-- **On-Chain Gateway:** External agent access is gated and verified through license checks on the smart contract.
+The Baseroot V2 architecture consists of three primary layers:
 
-### Data Privacy and ZK-RAG
-- **Zero-Knowledge Inference:** DAO datasets are processed without exposure to the end-user or the base model. The LLM generates insights while maintaining raw data confidentiality.
-- **Dataset Provenance:** Datasets are registered on-chain with immutable hashes via the `registerDataset` function to protect intellectual property.
+1. **On-Chain Registries:** Immutable registries for Agents and Datasets with cryptographic provenance.
+2. **Verified Data Pools:** DAO-controlled datasets with programmable licenses and usage-based royalty policies.
+3. **Zero-Knowledge Inference:** A secure execution environment where AI agents process sensitive DAO data without direct download or exposure, ensuring data sovereignty.
 
-### Professional Interface
-- **Modern Aesthetic:** A formal interface utilizing glassmorphism and amber highlights for a professional, high-tech experience.
-- **Role-Based Portals:** Dedicated dashboards tailored for the specific needs of Consumers, Developers, and DAO Administrators.
+## Technical Specifications
 
-## Technical Stack
+- **Blockchain:** Avalanche Fuji (Chain ID: 43113)
+- **Smart Contract:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782`
+- **Application Stack:** React 19, Vite, TailwindCSS 4, Wagmi/Viem, tRPC, Firebase Firestore.
 
-- **Frontend:** React 19, Vite, TailwindCSS 4, Wagmi/Viem, tRPC.
-- **Backend:** Node.js/Express, Firebase Firestore (prefixed collections), Firebase Auth.
-- **Smart Contract:** Solidity (BaserootMarketplaceV2) deployed on the Fuji Testnet.
+## Deployment and Integration
 
-## Installation and Deployment
+### Dependencies
+Ensure Node.js 22+ and pnpm 10+ are installed.
 
-### 1. Clone the repository and install dependencies
-```bash
-pnpm install
-```
-
-### 2. Environment Configuration
-Copy the `.env.example` file to `.env` and configure the Avalanche Fuji contract address:
-```bash
-VITE_BASEROOT_MARKETPLACE_ADDRESS=0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782
-```
-
-### 3. Start the Development Server
-```bash
-pnpm dev
-```
-
-## Contract Information
-
-- **Network:** Avalanche Fuji (Chain ID: 43113)
-- **V2 Smart Contract Address:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782`
-- **Blockchain Explorer:** [Snowtrace Fuji](https://testnet.snowtrace.io/address/0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782)
+### Setup
+1. **Initialize Project:** `pnpm install`
+2. **Configure Environment:** Create a `.env` file with the protocol contract address.
+3. **Launch Protocol:** `pnpm dev`
 
 ---
-**Built for the DeSci Community • Powered by Avalanche (AVAX)**
+**Foundational Liquidity Layer for Decentralized Knowledge**
+*Powered by Avalanche (AVAX)*
 © 2026 Baseroot.io
