@@ -373,6 +373,8 @@ export async function startLicenseSync(): Promise<void> {
             address: MARKETPLACE_ADDRESS,
             abi: [LICENSE_PURCHASED_EVENT],
             eventName: 'LicensePurchased',
+            polling: true,
+            pollInterval: 10000, // 10 seconds
             onLogs: async (logs) => {
                 let maxBlock = BigInt(0);
                 for (const log of logs) {
