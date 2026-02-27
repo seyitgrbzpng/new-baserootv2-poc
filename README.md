@@ -1,12 +1,12 @@
 # Baseroot.io - DeSci AI Agent Marketplace
 
-> Decentralized AI Agent Marketplace powered by Solana blockchain
+> Decentralized AI Agent Marketplace powered by Avalanche (AVAX) blockchain
 
 ![Baseroot Logo](./client/public/logo.svg)
 
 ## 🚀 Genel Bakış
 
-Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcıların SOL token ile ödeme yaparak agentları kullanabildiği merkezi olmayan bir pazaryeri platformudur. DeSci (Decentralized Science) topluluğu için özel olarak tasarlanmıştır.
+Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcıların AVAX token ile ödeme yaparak agentları kullanabildiği merkezi olmayan bir pazaryeri platformudur. DeSci (Decentralized Science) topluluğu için özel olarak tasarlanmıştır.
 
 ## ✨ Özellikler
 
@@ -18,11 +18,11 @@ Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcılar�
 - Altın sarısı (#F1A70E) renk paleti
 
 ### 🔐 Blockchain & Wallet
-- Solana blockchain entegrasyonu
-- Phantom & Solflare wallet desteği
-- Devnet/Mainnet desteği
-- Otomatik payment split (%90 creator, %10 platform)
-- Transaction verification
+- Avalanche (C-Chain) blockchain entegrasyonu
+- Core, Metamask & EVM-compatible wallet desteği
+- Fuji Testnet desteği
+- Otomatik payment split (%50 DAO, %40 Creator, %10 Platform)
+- Transaction verification via Snowtrace
 
 ### 🤖 Agent Marketplace
 - Agent listeleme ve arama
@@ -33,11 +33,11 @@ Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcılar�
 - Agent versiyonlama
 
 ### 💳 Payment & Subscriptions
-- SOL ile ödeme
-- Pay-per-use model
+- AVAX (Avalanche Fuji) ile ödeme
+- Pay-per-License/License Gateway model
 - Subscription planları (Basic, Pro, Enterprise)
-- Otomatik yenileme
-- Payment history
+- Virtual Treasury (Claim) sistemi
+- Payment history with direct Snowtrace links
 
 ### 📊 Analytics & Dashboard
 - Creator Dashboard
@@ -78,14 +78,15 @@ Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcılar�
 - **tRPC** - Type-safe API
 - **Radix UI** - Component library
 - **Framer Motion** - Animations
-- **Solana Wallet Adapter** - Wallet integration
+- **Wagmi / Viem** - EVM Wallet integration
 
 ### Backend
 - **Express.js** - Web server
 - **tRPC** - API layer
 - **Firebase Firestore** - Database
 - **Firebase Auth** - Authentication (wallet-based & OAuth)
-- **Solana Web3.js** - Blockchain
+- **Wagmi / Viem** - Blockchain interaction
+- **BaserootMarketplaceV2.sol** - Avalanche Smart Contract
 - **OpenAI API** - LLM integration
 
 ## 📦 Kurulum
@@ -94,7 +95,7 @@ Baseroot.io, yapay zeka agentlarının alınıp satılabildiği, kullanıcılar�
 - Node.js 22.13.0+
 - pnpm 10.4.1+
 - Firebase account (Firestore + Auth)
-- Solana wallet (Phantom, Solflare, etc.)
+- Avalanche wallet (Core, Metamask, etc.)
 
 ### Adımlar
 

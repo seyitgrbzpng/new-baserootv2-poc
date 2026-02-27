@@ -15,6 +15,7 @@ Kullanıcı deneyimi karmaşasını önlemek adına modüler bir 3 ayaklı (3-Pi
 - Eskiden `Home.tsx` olan monolitik yapı buraya taşınmıştır.
 - Son kullanıcılar (Consumers) burada listelenen özel yapay zeka ajanlarını kategorilerine (Örn: Web3 Governance, DeFi, vb.) göre filtreler.
 - Kullanıcılar Avalanche (AVAX) üzerinden testnet ödemesi yaparak ajanlardan veri veya analiz hizmeti kiralarlar.
+- **Pay-per-License:** Kullanıcılar bir kez lisans alarak ajanı sınırsız veya belirli sürelerle kullanabilirler.
 
 ### 2.3. Geliştirici Stüdyosu (Creator Dashboard - `/creator`)
 - Yapay Zeka ajanlarını kodlayan veya tasarlayan "Geliştiricilerin" alanıdır.
@@ -31,15 +32,19 @@ Kullanıcı deneyimi karmaşasını önlemek adına modüler bir 3 ayaklı (3-Pi
 Solana mimarisinden Avalanche (C-Chain) ağına tam migrasyon sağlanmıştır.
 
 - **Ağ:** Avalanche Fuji Testnet (Chain ID: `43113`)
-- **Akıllı Sözleşme:** `BaserootMarketplace.sol`
-- **Sözleşme Adresi:** `0xF501b1615CD3B8E98c658C3F269A498c63A1D5Cb` (Güncel)
+- **Akıllı Sözleşme:** `BaserootMarketplaceV2.sol` (V2)
+- **Sözleşme Adresi:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782` (Fuji Testnet)
 - **Kütüphaneler:** Frontend ve Backend üzerinde Solana paketleri (`@solana/web3.js`, `bs58`) tamamen silinmiş, yerine `wagmi` ve `viem` paketleri entegre edilmiştir.
 
 ### 3.1. Temel Fonksiyonlar ve Gelir Modeli
 1. **`registerDataset(string datasetId, uint256 pricePerUse)`:** Veri sahibinin varlığını kanıtlaması (Provenance) içindir.
 2. **`registerAgent(string agentId, uint256 price)`:** Geliştiricinin ajanını platforma tanıtmasıdır.
 3. **`pay(string agentId, address creator)`:** Bir tüketici ajan ile konuştuğunda çalışan ödeme fonksiyonudur. 
-   - **Komisyon Modeli (%10):** Gönderilen AVAX tutarının yüzde 10'u `platformWallet` (Baseroot Hazinesi) hesabına kesilir. Kalan %90 direkt olarak AJAN GELİŞTİRİCİSİ'ne (creatorWallet) aktarılır. Bu protokol seviyesinde bir zorunluluktur.
+   - **Komisyon Modeli (3 Ayaklı Gelir Dağılımı):** Gönderilen AVAX tutarı akıllı sözleşme (`BaserootMarketplaceV2.sol`) tarafından otomatik olarak 3'e bölünür:
+    - **%50 DAO (Veri Sağlayıcı):** `daoOwner` hesabına anında aktarılır.
+    - **%40 Creator (Ajan Geliştirici):** `creator` hesabına anında aktarılır.
+    - **%10 Protocol (Baseroot Hazinesi):** `platformWallet` hesabına aktarılır.
+    Bu protokol seviyesinde bir şeffaflık ve adalet sağlar.
 
 ## 4. Sıfır Bilgi Veri Gizliliği (Zero-Knowledge & RAG)
 Geliştiricilerin DAO verilerini kendi veri tabanlarına çekmesini veya modellerini eğitirken çalmasını engellemek projenin en kilit güvenlik özelliğidir. Özel bir ZK-RAG (Retrieval-Augmented Generation) mimarisi kurulmuştur.
