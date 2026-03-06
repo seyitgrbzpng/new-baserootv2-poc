@@ -24,6 +24,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    target: "es2020", // Fixes private class fields (#S) issues in Web3 bundles
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "es2020",
+      define: {
+        global: "globalThis",
+      },
+    },
+  },
+  define: {
+    "process.env": {}, // Required for some deep dependencies
+    global: "globalThis", // Fixes "global is not defined" in some web3 libraries
   },
   server: {
     host: true,
