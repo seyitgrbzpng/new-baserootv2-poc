@@ -2,7 +2,9 @@
 
 Baseroot V2 is a decentralized protocol designed to enable AI agents to access DAO-owned verified datasets under programmable licenses, while automatically distributing revenue to data owners based on actual usage.
 
-![Baseroot Logo](./client/public/logo.svg)
+<p align="center">
+  <img src="./client/public/logo.png" alt="Baseroot Logo" width="200" />
+</p>
 
 ## Protocol Abstract
 
