@@ -221,7 +221,34 @@ export default function DaoDashboard() {
                                         <p className="text-gray-400 text-sm mt-0.5">Chronological record of economic distribution</p>
                                     </div>
                                 </div>
-                                <Button className="bg-white/5 hover:bg-white/10 text-white border border-white/10">
+                                <Button 
+                                    onClick={() => {
+                                        if (!ledgerQuery.data || ledgerQuery.data.length === 0) return;
+                                        const rows = ledgerQuery.data.map((entry: any) => [
+                                            entry.id || '',
+                                            entry.inference_id || '',
+                                            entry.created_at ? new Date(entry.created_at).toISOString() : '',
+                                            entry.amount_total || '0',
+                                            entry.breakdown?.agent_owner_amount || '0',
+                                            entry.breakdown?.data_provider_amount || '0',
+                                            entry.breakdown?.protocol_amount || '0'
+                                        ]);
+                                        const content = [
+                                            'Ledger ID,Inference ID,Date,Total Fee,Agent Payout,DAO Payout,Protocol Fee',
+                                            ...rows.map(r => r.map(v => `"${v}"`).join(','))
+                                        ].join('\n');
+                                        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+                                        const url = URL.createObjectURL(blob);
+                                        const link = document.createElement('a');
+                                        link.setAttribute('href', url);
+                                        link.setAttribute('download', `baseroot_dao_ledger_${new Date().toISOString().split('T')[0]}.csv`);
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    }}
+                                    disabled={!ledgerQuery.data || ledgerQuery.data.length === 0}
+                                    className="bg-white/5 hover:bg-white/10 text-white border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
                                     <Download className="w-4 h-4 mr-2" />
                                     Export CSV
                                 </Button>

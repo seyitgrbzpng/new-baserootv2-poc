@@ -4,9 +4,9 @@
 // 3-way split: DAO (Data Provider) / Agent Developer / Protocol
 // ─────────────────────────────────────────────────────────────
 
-const SPLIT_DAO_BPS = parseInt(process.env.SPLIT_DAO_BPS ?? '5000', 10);           // 50%
-const SPLIT_AGENT_DEV_BPS = parseInt(process.env.SPLIT_AGENT_DEV_BPS ?? '3000', 10); // 30%
-const SPLIT_PROTOCOL_BPS = parseInt(process.env.SPLIT_PROTOCOL_BPS ?? '2000', 10);   // 20%
+const SPLIT_DAO_BPS = parseInt(process.env.SPLIT_DAO_BPS ?? '5000', 10);           // 50%  — matches BaserootMarketplaceV2.sol
+const SPLIT_AGENT_DEV_BPS = parseInt(process.env.SPLIT_AGENT_DEV_BPS ?? '4000', 10); // 40%  — matches BaserootMarketplaceV2.sol
+const SPLIT_PROTOCOL_BPS = parseInt(process.env.SPLIT_PROTOCOL_BPS ?? '1000', 10);   // 10%  — matches BaserootMarketplaceV2.sol
 
 export interface SplitPolicy {
     dao_data_provider_bps: number;

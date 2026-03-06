@@ -35,7 +35,7 @@ Projenin kök dizininde bulunan `.env.example` dosyasını kopyalayarak yeni bir
 ```bash
 cp .env.example .env
 ```
-Gerekli alanları doldurun. Özellikle Avalanche test ağı smart contract adresinizin var olduğundan emin olun (Örn: `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782`).
+Gerekli alanları doldurun. Özellikle Avalanche test ağı smart contract adresinizin var olduğundan emin olun (Örn: `0x46A354d117D3fC564EB06749a12E82f8F1289aA8`).
 
 ### 2.4. Geliştirme Sunucusunu Başlatma
 Proje `tsx` ve `vite` ile hem sunucuyu hem de istemciyi aynı anda kaldırabilecek yapıdadır.

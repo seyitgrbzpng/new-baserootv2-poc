@@ -73,6 +73,7 @@ export const datasetsRouter = router({
             dataType: z.enum(['genomic', 'proteomic', 'imaging', 'clinical', 'environmental', 'web3_governance', 'web3_treasury', 'web3_defi']).optional(),
             dataFormat: z.enum(['csv', 'json', 'fastq', 'dicom', 'text']).optional(),
             dataContent: z.string().optional(),
+            txSignature: z.string().optional(),
         }))
         .mutation(async ({ input }) => {
             checkRateLimit(input.ownerWallet, 'creation');

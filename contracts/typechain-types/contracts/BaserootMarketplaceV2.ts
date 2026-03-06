@@ -32,7 +32,9 @@ export interface BaserootMarketplaceV2Interface extends Interface {
       | "getAgent"
       | "getDataset"
       | "getLicense"
+      | "hasLicense"
       | "isLicenseActive"
+      | "licenseExists"
       | "licenses"
       | "nextLicenseId"
       | "owner"
@@ -63,8 +65,16 @@ export interface BaserootMarketplaceV2Interface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "hasLicense",
+    values: [AddressLike, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isLicenseActive",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "licenseExists",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "licenses",
@@ -106,8 +116,13 @@ export interface BaserootMarketplaceV2Interface extends Interface {
   decodeFunctionResult(functionFragment: "getAgent", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getDataset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getLicense", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasLicense", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isLicenseActive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "licenseExists",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "licenses", data: BytesLike): Result;
@@ -353,11 +368,19 @@ export interface BaserootMarketplaceV2 extends BaseContract {
     "view"
   >;
 
+  hasLicense: TypedContractMethod<
+    [_buyer: AddressLike, _agentId: string],
+    [boolean],
+    "view"
+  >;
+
   isLicenseActive: TypedContractMethod<
     [_licenseId: BigNumberish],
     [boolean],
     "view"
   >;
+
+  licenseExists: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
   licenses: TypedContractMethod<
     [arg0: BigNumberish],
@@ -480,8 +503,18 @@ export interface BaserootMarketplaceV2 extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "hasLicense"
+  ): TypedContractMethod<
+    [_buyer: AddressLike, _agentId: string],
+    [boolean],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "isLicenseActive"
   ): TypedContractMethod<[_licenseId: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "licenseExists"
+  ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "licenses"
   ): TypedContractMethod<

@@ -4,7 +4,7 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Using account:", deployer.address);
 
-    const CONTRACT_ADDRESS = "0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782";
+    const CONTRACT_ADDRESS = "0x46A354d117D3fC564EB06749a12E82f8F1289aA8";
     const marketplace = await ethers.getContractAt("BaserootMarketplaceV2", CONTRACT_ADDRESS);
 
     // 1. Register a test dataset (DAO role)

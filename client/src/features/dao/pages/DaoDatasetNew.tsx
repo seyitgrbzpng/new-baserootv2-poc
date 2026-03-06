@@ -149,6 +149,7 @@ export default function DaoDatasetNew() {
                     tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
                     sampleDataUrl: formData.sampleDataUrl || undefined,
                     dataContent: formData.dataContent || undefined,
+                    txSignature: result.txSignature,
                 });
 
                 setTxStatus("confirmed");
@@ -356,18 +357,20 @@ export default function DaoDatasetNew() {
                     <div className="space-y-8 py-4">
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <Label htmlFor="revenueShare" className="text-gray-300 text-base">Protocol Revenue Share</Label>
-                                <span className="text-lg font-bold text-[#F1A70E]">{formData.revenueShare}%</span>
+                                <Label htmlFor="revenueShare" className="text-gray-300 text-base">Protocol Revenue Share (DAO)</Label>
+                                <span className="text-lg font-bold text-[#F1A70E]">50%</span>
                             </div>
-                            <p className="text-sm text-gray-500 mb-3">Percentage taken by the DAO/Protocol per inference. Agent consumers will pay this dynamically.</p>
+                            <p className="text-sm text-[#F1A70E]/80 mb-3 bg-[#F1A70E]/10 p-2 rounded-md border border-[#F1A70E]/20">
+                                🔒 For the Hackathon Demo, the DAO revenue block is hardcoded to 50% at the smart contract level. Agent consumers will pay this dynamically.
+                            </p>
                             <input
                                 type="range"
                                 id="revenueShare"
                                 min="0"
-                                max="50"
-                                value={formData.revenueShare}
-                                onChange={(e) => setFormData({ ...formData, revenueShare: Number(e.target.value) })}
-                                className="w-full accent-[#F1A70E] bg-black/40 h-2 rounded-lg appearance-none cursor-pointer mt-2"
+                                max="100"
+                                value={50}
+                                disabled
+                                className="w-full accent-[#F1A70E] bg-black/40 h-2 rounded-lg appearance-none mt-2 opacity-50 cursor-not-allowed"
                             />
                         </div>
 

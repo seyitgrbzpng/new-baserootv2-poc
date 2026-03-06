@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { PageHeader } from "@/shared/components/PageHeader";
 import { GlassCard } from "@/shared/components/GlassCard";
 import { TxButton, TxStatus } from "@/shared/components/TxButton";
+import { TransactionProofCard } from "@/shared/components/TransactionProofCard";
 import { EmptyState, LoadingState, ErrorState } from "@/shared/components/UIStates";
 import { Bot, ShieldCheck, Database, ArrowLeft, Send, Zap, Clock, Users, DollarSign, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -242,25 +243,23 @@ export default function AgentDetail() {
                             </>
                         ) : (
                             <div className="space-y-3">
-                                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-3">
-                                    <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
-                                    <div>
-                                        <p className="text-green-400 font-medium text-sm">Licensed ✅</p>
-                                        {licenseId !== null && (
-                                            <p className="text-green-400/60 text-xs font-mono">License #{licenseId}</p>
-                                        )}
+                                {txHash ? (
+                                    <TransactionProofCard
+                                        txHash={txHash}
+                                        agentId={agentId}
+                                        amount={agent.pricePerUse}
+                                        licenseId={licenseId}
+                                    />
+                                ) : (
+                                    <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-3">
+                                        <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+                                        <div>
+                                            <p className="text-green-400 font-medium text-sm">Licensed ✅</p>
+                                            {licenseId !== null && (
+                                                <p className="text-green-400/60 text-xs font-mono">License #{licenseId}</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                                {txHash && (
-                                    <a
-                                        href={`https://testnet.snowtrace.io/tx/${txHash}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-[#F1A70E] text-xs transition-colors"
-                                    >
-                                        <ExternalLink className="w-3.5 h-3.5" />
-                                        View on Snowtrace
-                                    </a>
                                 )}
                             </div>
                         )}

@@ -18,7 +18,7 @@ export const subscriptionsRouter = router({
       agentId: z.string(),
       plan: z.enum(['basic', 'pro', 'enterprise']),
       pricePerMonth: z.number(),
-      currency: z.string().default('SOL'),
+      currency: z.string().default('AVAX'),
       durationMonths: z.number().default(1),
     }))
     .mutation(async ({ input }) => {

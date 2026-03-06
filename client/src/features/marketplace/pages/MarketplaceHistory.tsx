@@ -23,13 +23,51 @@ export default function MarketplaceHistory() {
         { enabled: !!address }
     );
 
+    const handleExportCsv = () => {
+        if (!history || history.length === 0) return;
+
+        // CSV Header
+        const headers = ['Agent Name', 'Agent ID', 'Status', 'Response Time (ms)', 'Date', 'Transaction ID'];
+        
+        // CSV Rows
+        const rows = history.map((run: any) => [
+            run.agentName || 'Unknown Agent',
+            run.agentId || '',
+            run.status || 'unknown',
+            run.responseTime || '',
+            run.createdAt ? new Date(run.createdAt).toISOString() : '',
+            run.id || ''
+        ]);
+
+        // Build CSV string
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.map(v => `"${v}"`).join(','))
+        ].join('\n');
+
+        // Create blob and download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `baseroot_usage_history_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="animate-in fade-in duration-500 max-w-6xl mx-auto pb-20 p-6 space-y-8">
             <PageHeader
                 title="Usage History"
                 description="A log of your AI agent interactions and inference calls."
                 action={
-                    <Button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 h-9 text-sm">
+                    <Button 
+                        onClick={handleExportCsv}
+                        disabled={!history || history.length === 0}
+                        className="bg-white/5 hover:bg-white/10 text-white border border-white/10 h-9 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                         <Download className="w-4 h-4 mr-2" />
                         Export CSV
                     </Button>

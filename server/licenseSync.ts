@@ -367,34 +367,44 @@ export async function startLicenseSync(): Promise<void> {
         console.error('[LicenseSync] Past event scan failed:', err);
     }
 
-    // 2. Watch for new events
-    try {
-        const unwatch = publicClient.watchContractEvent({
-            address: MARKETPLACE_ADDRESS,
-            abi: [LICENSE_PURCHASED_EVENT],
-            eventName: 'LicensePurchased',
-            polling: true,
-            pollInterval: 10000, // 10 seconds
-            onLogs: async (logs) => {
+    // 2. Watch for new events — manual polling (Avalanche Fuji RPC eth_newFilter fix)
+    isWatching = true;
+    console.log('[LicenseSync] ✅ Starting manual event polling (Fallback mode for Avalanche)');
+
+    setInterval(async () => {
+        try {
+            const currentBlock = await publicClient.getBlockNumber();
+            const lastSynced = await getLastSyncedBlock();
+
+            if (currentBlock <= lastSynced) return;
+
+            const fromBlock = (currentBlock - lastSynced) > BigInt(100)
+                ? currentBlock - BigInt(100)
+                : lastSynced + BigInt(1);
+
+            const logs = await publicClient.getContractEvents({
+                address: MARKETPLACE_ADDRESS,
+                abi: [LICENSE_PURCHASED_EVENT],
+                eventName: 'LicensePurchased',
+                fromBlock,
+                toBlock: currentBlock,
+            });
+
+            if (logs.length > 0) {
                 let maxBlock = BigInt(0);
                 for (const log of logs) {
                     await processLicenseEvent(log as any, (log as any).transactionHash || '');
                     const bn = BigInt((log as any).blockNumber || 0);
                     if (bn > maxBlock) maxBlock = bn;
                 }
-                // Update lastSyncedBlock
                 if (maxBlock > BigInt(0)) {
                     await setLastSyncedBlock(maxBlock);
                 }
-            },
-            onError: (err) => {
-                console.error('[LicenseSync] Watch error:', err);
-            },
-        });
-
-        isWatching = true;
-        console.log('[LicenseSync] ✅ Watching for new LicensePurchased events');
-    } catch (err) {
-        console.error('[LicenseSync] Failed to start event watcher:', err);
-    }
+            } else {
+                await setLastSyncedBlock(currentBlock);
+            }
+        } catch (err: any) {
+            console.error('[LicenseSync] Polling error:', err.message || err);
+        }
+    }, 10000); // Poll every 10 seconds
 }

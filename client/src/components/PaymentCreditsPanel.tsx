@@ -21,43 +21,6 @@ import { toast } from 'sonner';
 
 // Sub-component for individual credit rows to handle localized state
 function CreditRow({ credit, onUseCredit }: { credit: any, onUseCredit: (id: string, agentId: string) => void }) {
-  const [showToken, setShowToken] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-
-  const accessTokenMutation = trpc.gateway.getAccessTokenWithCredit.useMutation({
-    onSuccess: (data) => {
-      setToken(data.token);
-      setShowToken(true);
-      toast.success("Access Token generated!");
-    },
-    onError: (error) => {
-      toast.error(`Failed to get token: ${error.message}`);
-    }
-  });
-
-  const handleToggleToken = () => {
-    if (showToken) {
-      setShowToken(false);
-      return;
-    }
-
-    if (token) {
-      setShowToken(true);
-    } else {
-      accessTokenMutation.mutate({
-        creditId: credit.id,
-        userWallet: credit.userId
-      });
-    }
-  };
-
-  const copyToken = () => {
-    if (token) {
-      navigator.clipboard.writeText(token);
-      toast.success("Token copied to clipboard");
-    }
-  };
-
   const statusBadge = (() => {
     switch (credit.status) {
       case 'available':
@@ -107,25 +70,6 @@ function CreditRow({ credit, onUseCredit }: { credit: any, onUseCredit: (id: str
           <div className="flex flex-col gap-2 justify-center">
             {/* Action Buttons */}
             <div className="flex gap-2 justify-end">
-              {credit.status === 'available' && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleToggleToken}
-                  disabled={accessTokenMutation.isPending}
-                  className="border-gray-600 hover:bg-gray-700 text-gray-300 gap-2"
-                >
-                  {accessTokenMutation.isPending ? (
-                    <span className="animate-spin">⌛</span>
-                  ) : showToken ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Key className="w-4 h-4" />
-                  )}
-                  {showToken ? "Hide Key" : "Reveal Access Key"}
-                </Button>
-              )}
-
               <Button
                 size="sm"
                 onClick={() => onUseCredit(credit.id || '', credit.agentId)}
@@ -136,24 +80,6 @@ function CreditRow({ credit, onUseCredit }: { credit: any, onUseCredit: (id: str
             </div>
           </div>
         </div>
-
-        {/* Token Display Area */}
-        {showToken && token && (
-          <div className="mt-3 p-3 bg-black/40 rounded border border-gray-700 animate-in fade-in slide-in-from-top-2">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-mono text-gray-500 uppercase">One-Time Access Token (JWT)</span>
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-white" onClick={copyToken}>
-                <Copy className="w-3 h-3" />
-              </Button>
-            </div>
-            <code className="block w-full p-2 bg-black/60 rounded text-[10px] text-green-400 font-mono break-all border border-green-900/30">
-              {token}
-            </code>
-            <p className="mt-2 text-[10px] text-amber-500/80 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Valid for 5 minutes. Use via SDK or API.
-            </p>
-          </div>
-        )}
 
         <div className="border-t border-gray-700 pt-3 mt-3">
           <a

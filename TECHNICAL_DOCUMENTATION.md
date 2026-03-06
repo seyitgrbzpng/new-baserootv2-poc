@@ -33,27 +33,27 @@ Solana mimarisinden Avalanche (C-Chain) ağına tam migrasyon sağlanmıştır.
 
 - **Ağ:** Avalanche Fuji Testnet (Chain ID: `43113`)
 - **Akıllı Sözleşme:** `BaserootMarketplaceV2.sol` (V2)
-- **Sözleşme Adresi:** `0x3e251B4d78b0351A9E5a7d3df134b8e5870e7782` (Fuji Testnet)
+- **Sözleşme Adresi:** `0x46A354d117D3fC564EB06749a12E82f8F1289aA8` (Fuji Testnet)
 - **Kütüphaneler:** Frontend ve Backend üzerinde Solana paketleri (`@solana/web3.js`, `bs58`) tamamen silinmiş, yerine `wagmi` ve `viem` paketleri entegre edilmiştir.
 
 ### 3.1. Temel Fonksiyonlar ve Gelir Modeli
 1. **`registerDataset(string datasetId, uint256 pricePerUse)`:** Veri sahibinin varlığını kanıtlaması (Provenance) içindir.
-2. **`registerAgent(string agentId, uint256 price)`:** Geliştiricinin ajanını platforma tanıtmasıdır.
-3. **`pay(string agentId, address creator)`:** Bir tüketici ajan ile konuştuğunda çalışan ödeme fonksiyonudur. 
-   - **Komisyon Modeli (3 Ayaklı Gelir Dağılımı):** Gönderilen AVAX tutarı akıllı sözleşme (`BaserootMarketplaceV2.sol`) tarafından otomatik olarak 3'e bölünür:
+2. **`registerAgent(string agentId, uint256 price, string datasetId)`:** Geliştiricinin ajanını platforma tanıtmasıdır.
+3. **`buyLicense(string agentId)`:** Bir tüketici ajan ile konuştuğunda çalışan ödeme fonksiyonudur.
+   - **Komisyon Modeli (3 Ayaklı Gelir Dağılımı):** Gönderilen AVAX tutarı akıllı sözleşme (`BaserootMarketplaceV2.sol`) tarafından `buyLicense()` fonksiyonu ile otomatik olarak 3'e bölünür:
     - **%50 DAO (Veri Sağlayıcı):** `daoOwner` hesabına anında aktarılır.
     - **%40 Creator (Ajan Geliştirici):** `creator` hesabına anında aktarılır.
     - **%10 Protocol (Baseroot Hazinesi):** `platformWallet` hesabına aktarılır.
     Bu protokol seviyesinde bir şeffaflık ve adalet sağlar.
 
-## 4. Sıfır Bilgi Veri Gizliliği (Zero-Knowledge & RAG)
-Geliştiricilerin DAO verilerini kendi veri tabanlarına çekmesini veya modellerini eğitirken çalmasını engellemek projenin en kilit güvenlik özelliğidir. Özel bir ZK-RAG (Retrieval-Augmented Generation) mimarisi kurulmuştur.
+## 4. Gizli Veri Çıkarımı – Confidential Inference (Server-Side Isolation & RAG)
+Geliştiricilerin DAO verilerini kendi veri tabanlarına çekmesini veya modellerini eğitirken çalmasını engellemek projenin en kilit güvenlik özelliğidir. Sunucu tarafı izolasyon ve katı prompt kuralları ile veri gizliliği sağlanır. *(Not: Kriptografik sıfır bilgi ispatı (ZK Proof) kullanılmamaktadır; veri gizliliği sunucu tarafı güvenlik duvarı ile uygulanır.)*
 
 ### 4.1. Sunucu Tarafı Güvenlik Duvarı (Backend Isolation)
 Yüklenen veriler asla frontend'e gönderilmez. `server/datasets-router.ts` içerisindeki `list`, `getById` veya `getByOwner` API uçlarında (TRPC) şu kod çalışır:
 ```typescript
 const { dataContent, ...rest } = d;
-return rest; 
+return rest;
 ```
 Bu kod, veri tabanı objesinden asıl metni (`dataContent`) siler. Böylece geliştirici sadece Dataset'in adını ve fiyatını listelemede görebilir.
 
@@ -77,7 +77,7 @@ Eski koleksiyonlar (`users`, `agents`, `payments`) geride bırakılıp, bütün 
 - `avax_users`
 - `avax_inferences`
 
-Eski bir Solana Cüzdan adresi uygulamaya girse dahi `avax_users` tablosunda karşılığı olmadığı için sistem çakışmaları tamamen izole edilmiştir.
+
 
 ## 6. Frontend Teknolojileri ve UI/UX İyileştirmeleri
 - Tüketici güvenini ve modern bir "Siberpunk / Yapay Zeka" hissiyatını yakalamak için UI bileşenlerinde (`shadcn/ui`, `lucide-react`) siyah arkaplanlar üzerine saydam, buzlu cam (Glassmorphism) görünümleri uygulandı.

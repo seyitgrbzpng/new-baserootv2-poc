@@ -55,6 +55,7 @@ export interface FirestoreDataset {
   // Metadata
   category: string;
   tags: string[];
+  txSignature?: string; // Verification link to original on-chain registration
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

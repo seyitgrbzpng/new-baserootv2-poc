@@ -59,9 +59,7 @@ import {
   getAllRateLimitStats,
   RATE_LIMITS,
 } from "./rateLimit";
-import { gatewayRouter } from "./gateway-router"; // V2 Gateway
-import { protocol } from "./protocol/ProtocolStore";
-import { authGateway } from "./services/AuthGateway";
+// V2 Gateway removed
 
 // Core imports
 
@@ -111,8 +109,7 @@ export const appRouter = router({
   paymentCredits: paymentCreditsRouter,
   datasets: datasetsRouter, // V2 NEW
 
-  // V2 Protocol Gateway
-  gateway: gatewayRouter,
+  // V2 Protocol Gateway (Obsolete)
 
   // ChainGPT PoC — LLM Inference + Economic Attribution
   agentRun: agentRunRouter,
@@ -220,7 +217,7 @@ export const appRouter = router({
         healthCheckUrl: z.string().url().optional(),
         publicKey: z.string().optional(),
         pricePerUse: z.number().positive(),
-        currency: z.enum(['SOL', 'TON', 'BASE', 'AVAX']).default('AVAX'),
+        currency: z.literal('AVAX').default('AVAX'),
         datasetIds: z.array(z.string()).optional(), // V2 NEW
       }))
       .mutation(async ({ input }) => {

@@ -88,6 +88,13 @@ export default function DatasetsPage() {
                                             </a>
                                         </div>
                                     )}
+                                    {(dataset as any).txSignature && (
+                                        <div className="pt-3 mt-3 border-t border-white/5">
+                                            <a href={`https://testnet.snowtrace.io/tx/${(dataset as any).txSignature}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors font-mono">
+                                                <ExternalLink className="w-4 h-4" /> Verify Tx on Snowtrace
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="bg-black/40 p-4 border-t border-white/5 text-xs text-center text-gray-500 font-medium">

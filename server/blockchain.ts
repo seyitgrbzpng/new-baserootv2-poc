@@ -3,8 +3,12 @@ import { avalancheFuji } from 'viem/chains';
 
 // Configuration
 const RPC_URL = process.env.VITE_RPC_URL || 'https://api.avax-test.network/ext/bc/C/rpc'; // Fallback to public RPC
-const PLATFORM_WALLET = process.env.PLATFORM_WALLET || '0xDeFea7a...'; // Should be set in .env
+const PLATFORM_WALLET = process.env.PLATFORM_WALLET || ''; // Must be set in .env
 const MARKETPLACE_CONTRACT = (process.env.VITE_BASEROOT_MARKETPLACE_ADDRESS || '').toLowerCase(); // V2 contract
+
+// Revenue split aligned with BaserootMarketplaceV2.sol
+const CREATOR_PERCENT = 40;
+const DAO_PERCENT = 50;
 const PLATFORM_FEE_PERCENT = 10;
 
 // Initialize Viem Client
@@ -111,14 +115,17 @@ export function getPlatformConfig() {
 
 export function calculatePaymentSplit(amount: number): {
     total: number;
-    platformFee: number;
     creatorAmount: number;
+    daoAmount: number;
+    platformFee: number;
 } {
-    const platformFee = amount * (PLATFORM_FEE_PERCENT / 100);
-    const creatorAmount = amount - platformFee;
+    const creatorAmount = amount * (CREATOR_PERCENT / 100);
+    const daoAmount = amount * (DAO_PERCENT / 100);
+    const platformFee = amount - creatorAmount - daoAmount; // remainder → protocol (10%)
     return {
         total: amount,
-        platformFee,
         creatorAmount,
+        daoAmount,
+        platformFee,
     };
 }

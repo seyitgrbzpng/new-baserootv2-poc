@@ -202,7 +202,32 @@ export default function CreatorDashboard() {
       <div className="space-y-6 animate-in fade-in duration-500 delay-300">
         <div className="flex items-center justify-between px-1">
           <h3 className="text-xl font-bold text-white">Recent Earnings Overview</h3>
-          <Button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 h-9 text-sm">
+          <Button 
+            onClick={() => {
+              if (!earnings || earnings.length === 0) return;
+              const rows = earnings.map((p: any) => [
+                p.id || '',
+                p.txSignature || '',
+                p.amountPaid || '0',
+                p.creatorAmount || '0',
+                p.createdAt ? new Date(p.createdAt).toISOString() : ''
+              ]);
+              const content = [
+                'Payment ID,Transaction Hash,Total Paid (AVAX),Creator Share (AVAX),Date',
+                ...rows.map((r: any[]) => r.map(v => `"${v}"`).join(','))
+              ].join('\n');
+              const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.setAttribute('href', url);
+              link.setAttribute('download', `baseroot_creator_earnings_${new Date().toISOString().split('T')[0]}.csv`);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            disabled={!earnings || earnings.length === 0}
+            className="bg-white/5 hover:bg-white/10 text-white border border-white/10 h-9 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export CSV
           </Button>

@@ -38,6 +38,7 @@ contract BaserootMarketplaceV2 is Ownable, ReentrancyGuard {
     mapping(string => Dataset) public datasets;
     mapping(string => Agent)   public agents;
     mapping(uint256 => License) public licenses;
+    mapping(bytes32 => bool) public licenseExists;  // keccak256(buyer, agentId) => true
 
     uint256 public nextLicenseId;
     address payable public platformWallet;
@@ -142,29 +143,18 @@ contract BaserootMarketplaceV2 is Ownable, ReentrancyGuard {
      * @param _agentId Agent to purchase license for.
      */
     function buyLicense(string calldata _agentId) external payable nonReentrant {
+        // Duplicate license guard
+        bytes32 licenseKey = keccak256(abi.encodePacked(msg.sender, _agentId));
+        require(!licenseExists[licenseKey], "License already purchased");
+
         Agent storage agent = agents[_agentId];
         require(agent.exists,              "Agent does not exist");
         require(msg.value >= agent.price,  "Insufficient payment");
 
-        // Resolve recipients from stored state (never from user input)
-        address payable creator  = payable(agent.creator);
-        Dataset storage dataset  = datasets[agent.datasetId];
-        address payable daoOwner = payable(dataset.owner);
-
-        // Revenue split
-        uint256 creatorShare  = (msg.value * 40) / 100;
-        uint256 daoShare      = (msg.value * 50) / 100;
-        uint256 platformShare = msg.value - creatorShare - daoShare; // remainder → platform (10%)
-
-        // Transfers
-        (bool s1, ) = creator.call{value: creatorShare}("");
-        require(s1, "Creator transfer failed");
-
-        (bool s2, ) = daoOwner.call{value: daoShare}("");
-        require(s2, "DAO transfer failed");
-
-        (bool s3, ) = platformWallet.call{value: platformShare}("");
-        require(s3, "Platform transfer failed");
+        // Distribute revenue (extracted to stay under stack limit)
+        address creatorAddr = agent.creator;
+        address daoAddr     = datasets[agent.datasetId].owner;
+        _distribute(creatorAddr, daoAddr, msg.value);
 
         // Record license
         uint256 licenseId = nextLicenseId;
@@ -174,6 +164,7 @@ contract BaserootMarketplaceV2 is Ownable, ReentrancyGuard {
             purchasedAt: block.timestamp,
             active: true
         });
+        licenseExists[licenseKey] = true;
         nextLicenseId++;
 
         emit LicensePurchased(
@@ -181,9 +172,28 @@ contract BaserootMarketplaceV2 is Ownable, ReentrancyGuard {
             _agentId,
             msg.sender,
             msg.value,
-            creator,
-            daoOwner
+            creatorAddr,
+            daoAddr
         );
+    }
+
+    /**
+     * @dev Internal revenue distribution: 40% creator · 50% DAO · 10% platform.
+     *      Extracted to keep buyLicense under EVM stack limit.
+     */
+    function _distribute(address _creator, address _daoOwner, uint256 _total) internal {
+        uint256 creatorShare  = (_total * 40) / 100;
+        uint256 daoShare      = (_total * 50) / 100;
+        uint256 platformShare = _total - creatorShare - daoShare;
+
+        (bool s1, ) = payable(_creator).call{value: creatorShare}("");
+        require(s1, "Creator transfer failed");
+
+        (bool s2, ) = payable(_daoOwner).call{value: daoShare}("");
+        require(s2, "DAO transfer failed");
+
+        (bool s3, ) = platformWallet.call{value: platformShare}("");
+        require(s3, "Platform transfer failed");
     }
 
     // ──────────────────────────── View Helpers ───────────────────────
@@ -214,5 +224,12 @@ contract BaserootMarketplaceV2 is Ownable, ReentrancyGuard {
 
     function isLicenseActive(uint256 _licenseId) external view returns (bool) {
         return licenses[_licenseId].active;
+    }
+
+    /**
+     * @notice Check if a wallet already holds a license for a given agent.
+     */
+    function hasLicense(address _buyer, string calldata _agentId) external view returns (bool) {
+        return licenseExists[keccak256(abi.encodePacked(_buyer, _agentId))];
     }
 }

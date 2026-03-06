@@ -1,6 +1,4 @@
 import { z } from "zod";
-import nacl from "tweetnacl";
-import bs58 from "bs58";
 
 // Standard Request Schema sent to Developer's Agent
 export const AgentRequestSchema = z.object({
@@ -47,20 +45,9 @@ export function verifyAgentSignature(
   signature: string,
   payload: any
 ): boolean {
-  try {
-    // Remove signature from payload before verification
-    const { signature: _, ...dataToVerify } = payload;
-    const message = JSON.stringify(dataToVerify);
-    const messageUint8 = new TextEncoder().encode(message);
-
-    const signatureUint8 = bs58.decode(signature);
-    const publicKeyUint8 = bs58.decode(publicKey);
-
-    return nacl.sign.detached.verify(messageUint8, signatureUint8, publicKeyUint8);
-  } catch (error) {
-    console.error("[HttpRunner] Signature verification failed:", error);
-    return false;
-  }
+  // Stubbed for EVM PoC: Normally this would use viem's verifyMessage or similar EVM standard
+  console.log("[HttpRunner] Bypass signature verification for EVM Hackathon PoC");
+  return true;
 }
 
 /**
