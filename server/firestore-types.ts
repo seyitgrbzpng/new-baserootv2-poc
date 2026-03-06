@@ -355,7 +355,7 @@ export interface FirestoreMultichainWallet {
   userUid: string;
 
   // Wallet addresses
-  solanaAddress?: string;
+  avaxAddress?: string;
   tonAddress?: string;
   baseAddress?: string;
 
