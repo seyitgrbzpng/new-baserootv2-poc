@@ -10,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
       # Avalanche testnet smart contract
-      - key: VITE_MARKETPLACE_V2_ADDRESS
+      - key: VITE_BASEROOT_MARKETPLACE_ADDRESS
         value: "0x46A354d117D3fC564EB06749a12E82f8F1289aA8"
       
       # The following keys must be set manually in the Render Dashboard after connecting the repo!
