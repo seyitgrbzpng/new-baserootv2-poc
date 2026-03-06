@@ -11,7 +11,7 @@ import { Timestamp, FieldValue } from 'firebase-admin/firestore';
 
 export interface FirestoreUser {
   uid: string; // Firebase Auth UID
-  walletAddress?: string; // Primary Solana wallet
+  walletAddress?: string; // Primary EVM wallet (Avalanche)
   username?: string;
   email?: string;
   role: 'user' | 'creator' | 'admin';
@@ -360,7 +360,7 @@ export interface FirestoreMultichainWallet {
   baseAddress?: string;
 
   // Primary wallet
-  primaryChain: 'SOL' | 'TON' | 'BASE';
+  primaryChain: 'AVAX' | 'TON' | 'BASE';
 
   // Verification
   verified: boolean;

@@ -2,7 +2,7 @@
 
 ## Kimlik Doğrulama Akışı (Wallet -> Firebase -> API)
 
-1. Kullanıcı Solana cüzdanını bağlar.
+1. Kullanıcı EVM (Avalanche) cüzdanını bağlar.
 2. Client, backend'den imzalanacak bir mesaj ister (nonce + timestamp içerir).
 3. Kullanıcı mesajı cüzdanıyla imzalar.
 4. Client, imzayı backend'e gönderir.

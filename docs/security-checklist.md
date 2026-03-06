@@ -14,7 +14,7 @@
 - Rate limit / abuse koruması (API gateway veya server middleware)
 
 ## Bilinen Sınırlamalar
-- Firebase rules, zincir üzeri (Solana) transaction doğrulamasını yapmaz; bu doğrulama backend tarafında yapılmalıdır.
+- Firebase rules, zincir üzeri (Avalanche) transaction doğrulamasını yapmaz; bu doğrulama backend tarafında yapılmalıdır.
 - Public read açık koleksiyonlarda (agents, reviews, agent_versions) hassas veri tutulmamalıdır.
 
 ## Rol Atama (Admin / Creator)
