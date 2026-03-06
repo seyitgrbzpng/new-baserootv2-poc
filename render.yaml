@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: baseroot-v2-marketplace
+    env: node
+    # The build command installs dependencies and outputs the frontend and backend to /dist
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build
+    # The start command serves the production express app which also serves the Vite frontend
+    startCommand: pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Avalanche testnet smart contract
+      - key: VITE_MARKETPLACE_V2_ADDRESS
+        value: "0x46A354d117D3fC564EB06749a12E82f8F1289aA8"
+      
+      # The following keys must be set manually in the Render Dashboard after connecting the repo!
+      - key: CHAINGPT_API_KEY
+        sync: false
+      
+      # Firebase Admin Keys (Server-side)
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      
+      # Vite Public Firebase Keys (Client-side)
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: VITE_FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: VITE_FIREBASE_APP_ID
+        sync: false

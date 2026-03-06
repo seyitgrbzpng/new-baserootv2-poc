@@ -2,7 +2,7 @@
 
 Baseroot V2 is a decentralized protocol designed to enable AI agents to access DAO-owned verified datasets under programmable licenses, while automatically distributing revenue to data owners based on actual usage.
 
-
+![Baseroot Logo](./client/public/logo.svg)
 
 ## Protocol Abstract
 
@@ -10,6 +10,25 @@ The protocol introduces a new economic layer where knowledge becomes a yield-gen
 
 > [!IMPORTANT]
 > For the complete technical specification and long-term vision, please refer to the **[Baseroot V2 Whitepaper](./WHITEPAPER.md)**.
+> For the technical architecture overview, see **[Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)**.
+
+## Live Deployment & Demo Links 🏆
+
+- **Contract Address:** [`0x46A354d117D3fC564EB06749a12E82f8F1289aA8`](https://testnet.snowtrace.io/address/0x46A354d117D3fC564EB06749a12E82f8F1289aA8)
+- **Network:** Avalanche Fuji Testnet (Chain ID: 43113)
+- **Demo Elements Registered On-Chain:**
+  - Demo Agent: `agent-test-001`
+  - Demo Dataset: `ds-test-001`
+
+### Hackathon Demo Flow (2 Minutes)
+**"Baseroot turns AI agents into licensed digital products."**
+1. **Dataset Register:** Show DAO uploading verified data pool via **Creator Studio** or **DAO Portal**.
+2. **Agent Register:** Show Developer creating an AI agent linked to the DAO dataset in **Creator Studio**.
+3. **License Purchase:** Show Consumer buying a license on the **Marketplace** with AVAX.
+4. **Avalanche Transaction:** Show metamask confirmation and fast finality.
+5. **On-Chain Verification:** Show the Transaction Proof Card linking to Snowtrace, proving the 50/40/10 revenue split.
+6. **AI Agent Unlock:** Show the Confidential Inference run securely without raw data exposure.
+
 
 ## Economic Model: Revenue Routing (50/40/10)
 
@@ -34,38 +53,47 @@ The Baseroot V2 architecture consists of three primary layers:
 2. **Verified Data Pools:** DAO-controlled datasets with programmable licenses and usage-based royalty policies.
 3. **Confidential Inference:** A server-side execution environment where AI agents process sensitive DAO data without direct download or exposure, ensuring data sovereignty. *(Uses strict server-side isolation and prompt constraints — not cryptographic zero-knowledge proofs.)*
 
-## Technical Specifications
+```text
+┌─────────────┐    ┌──────────────┐    ┌──────────────────┐
+│  Frontend    │───▶│  Backend     │───▶│  Smart Contract  │
+│  React/Vite  │    │  tRPC/Node   │    │  BaserootV2.sol  │
+│  Wagmi/Viem  │    │  Firebase    │    │  Avalanche Fuji  │
+└─────────────┘    └──────────────┘    └──────────────────┘
+       │                   │                     │
+  3 Pillars:          License Sync:         On-chain:
+  /marketplace        Event listener        registerDataset
+  /creator            Firestore write       registerAgent
+  /dao                Retry + fallback      buyLicense
+```
 
-- **Blockchain:** Avalanche Fuji (Chain ID: 43113)
-- **Smart Contract:** `0x46A354d117D3fC564EB06749a12E82f8F1289aA8`
-- **Application Stack:** React 19, Vite, TailwindCSS 4, Wagmi/Viem, tRPC, Firebase Firestore.
+## Key Technical Features
 
-## Demo Proof Checklist
+| Feature | Implementation |
+|---------|---------------|
+| **Revenue Split** | On-chain, atomic 3-way split in `buyLicense()` |
+| **Duplicate Prevention** | `licenseExists` mapping blocks repeat purchases |
+| **License Verification** | `hasLicense()` view function + Firestore sync |
+| **Data Privacy** | Server-side isolation — `dataContent` stripped before API response |
+| **Prompt Security** | Hard system prompt: "NEVER leak raw dataset text" |
+| **Reentrancy Guard** | OpenZeppelin `ReentrancyGuard` on all payable functions |
 
-Use this checklist to verify the end-to-end flow works on-chain:
-
-- [ ] **1. Register Dataset** — DAO uploads a verified data pool via Creator Studio
-- [ ] **2. Register Agent** — Developer creates an AI agent linked to the DAO dataset
-- [ ] **3. Buy License** — Consumer purchases a license on the Marketplace (AVAX payment)
-- [ ] **4. Verify Tx on Snowtrace** — Transaction Proof Card shows Snowtrace link, revenue split, contract address
-- [ ] **5. Verify Revenue Split** — Check that 50% DAO / 40% Creator / 10% Protocol balances are correct
-- [ ] **6. Duplicate Guard** — Attempt to buy the same license again → should revert with "License already purchased"
-- [ ] **7. Run Inference** — Send a prompt to the licensed agent → receive analysis without raw data exposure
-- [ ] **8. Check `hasLicense()`** — Call the view function to confirm license existence on-chain
-
-> **Snowtrace Explorer:** https://testnet.snowtrace.io/address/0x46A354d117D3fC564EB06749a12E82f8F1289aA8
 
 ## Deployment and Integration
 
-### Dependencies
-Ensure Node.js 22+ and pnpm 10+ are installed.
+### Option 1: Render (Recommended - 1-Click Deploy)
+This project includes a `render.yaml` Blueprint.
+1. Connect this repository to your [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** > **Blueprint**.
+3. Render will automatically build (`pnpm run build`) and start the Node.js server.
+4. **Important:** Make sure to populate your Firebase and ChainGPT API keys in the Render Environment Variables tab.
 
-### Setup
-1. **Initialize Project:** `pnpm install`
-2. **Configure Environment:** Create a `.env` file with the protocol contract address.
-3. **Launch Protocol:** `pnpm dev`
+### Option 2: Local Setup
+1. **Dependencies:** Ensure Node.js 22+ and pnpm 10+ are installed.
+2. **Initialize Project:** `pnpm install`
+3. **Configure Environment:** Create a `.env` file containing your Firebase and API keys.
+4. **Launch Protocol:** `pnpm dev`
 
 ---
 **Foundational Liquidity Layer for Decentralized Knowledge**
-*Powered by Avalanche (AVAX)*
+*Built for Avalanche Build Games · Powered by Avalanche C-Chain*
 © 2026 Baseroot.io
