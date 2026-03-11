@@ -94,7 +94,35 @@ The frontend listens for transaction confirmation via `useWaitForTransactionRece
 - `/server/services/attribution.ts`: 3-way revenue split (basis points) aligned with the smart contract.
 - `/server/firebase.ts`: Firebase Admin SDK initialization and Firestore wrappers. All V2 collections use `avax_` prefix.
 
-## 5. Folder Structure Summary
+## 5. Modular Architecture Extension (Planned)
+
+Baseroot is designed to support integrations with leading Web3 infrastructure providers. The following diagram illustrates how future integrations like Chainlink and Agora will naturally extend the protocol's modular layers.
+
+```text
+Baseroot Protocol Architecture (Extended)
+
+DAO Governance Layer
+    └ Agora (planned)
+        ├ Dataset verification proposals
+        └ Categorization and policy voting
+
+Agent Marketplace Layer
+    ├ Dataset Registry
+    ├ AI Agent Deployment
+    └ Licensing System
+
+Oracle & Automation Layer
+    └ Chainlink (planned)
+        ├ Chainlink Functions
+        ├ Chainlink Automation
+        └ Future CCIP support
+
+Settlement Layer
+    └ Revenue Split Smart Contracts
+        └ On-chain payouts
+```
+
+## 6. Folder Structure Summary
 
 - `client/src/features/`: 3-pillar page components (`creator/`, `dao/`, `marketplace/`).
 - `client/src/components/`: Reusable UI components (shadcn/ui based).
@@ -102,7 +130,7 @@ The frontend listens for transaction confirmation via `useWaitForTransactionRece
 - `shared/`: Common type definitions shared between client and server.
 - `contracts/`: Solidity contracts with Hardhat build artifacts.
 
-## 6. Security Summary
+## 7. Security Summary
 
 | Layer | Mechanism |
 |-------|-----------|

@@ -147,13 +147,27 @@ This project includes a `render.yaml` Blueprint.
 
 ---
 
-## Future Roadmap
-- Chainlink automation for licensing settlement.
-- On-chain dataset reputation.
-- Agent marketplace expansion.
-- DAO governance layer.
-- Multi-chain expansion.
+## Strategic Infrastructure Partners
 
+Baseroot follows a modular protocol architecture designed to evolve beyond the initial MVP. This design enables the protocol to integrate oracle infrastructure, automation layers, and decentralized governance systems without breaking the core marketplace logic.
+
+**Planned Integrations:**
+- **Chainlink** (Oracle & Automation Layer)
+- **Agora** (Governance Layer)
+
+### Chainlink Integration (Planned)
+Chainlink is planned as Baseroot’s oracle and automation layer. In future versions, it can support external data verification, automated protocol actions, and long-term cross-chain interoperability for dataset and agent flows.
+
+### Agora Governance Integration (Planned)
+Agora is planned as the governance layer for Baseroot’s dataset economy. It can enable DAO-based decision making around verified datasets, marketplace rules, and protocol configuration.
+
+---
+
+## Future Roadmap
+
+- **Phase 1 — MVP Foundation (Current Stage):** Dataset registry, agent deployment, licensing, and revenue split.
+- **Phase 2 — Oracle & Governance Integration (Planned):** Chainlink Functions/Automation, and Agora governance for datasets.
+- **Phase 3 — Advanced Infrastructure Expansion (Planned):** Cross-chain dataset access, automated usage verification, and broader governance controls.
 ## Why Avalanche
 Avalanche provides:
 - **Fast Finality:** Near-instant transaction confirmation.
